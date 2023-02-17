@@ -37,6 +37,13 @@ class CatSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         return dt.datetime.now().year - obj.birth_year
 
+    def validate(self, data):
+        if data['name'] == data['color']:
+            raise serializers.ValidationError(
+                'Имя не может совпадать с цветом!'
+            )
+        return data
+
     def validate_birth_year(self, value):
         year = dt.date.today().year
         if not (year - 40 < value <= year):
