@@ -37,6 +37,12 @@ class CatSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         return dt.datetime.now().year - obj.birth_year
 
+    def validate_birth_year(self, value):
+        year = dt.date.today().year
+        if not (year - 40 < value <= year):
+            raise serializers.ValidationError('Проверьте год рождения')
+        return value
+
     def create(self, validated_data):
         if 'achievements' not in self.initial_data:
             cat = Cat.objects.create(**validated_data)
