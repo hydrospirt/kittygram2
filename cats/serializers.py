@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueTogetherValidator
 
 import datetime as dt
 
-from .models import CHOICES, Achievement, AchievementCat, Cat, User
+from cats.models import CHOICES, Achievement, AchievementCat, Cat, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,6 +33,14 @@ class CatSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'birth_year', 'achievements', 'owner',
                   'age')
         read_only_fields = ('owner',)
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Cat.objects.all(),
+                fields=('name', 'owner'),
+                message='Запись уже есть в базе данных'
+            )
+        ]
 
     def get_age(self, obj):
         return dt.datetime.now().year - obj.birth_year
